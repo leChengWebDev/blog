@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    .footer-wrapper {
+        background: white;
+    }
+
+    .footer-wrapper .content {
+        max-width: 1100px;
+        margin:0 auto;
+    }
+    .footer-wrapper .content:after{
+        content:'';
+        display:block;
+        height:0;
+        width:0;
+        visibility: hidden;
+        clear: both;
+    }
+    .footer-wrapper .content .img-wrapper{
+        text-align: center;
+    }
+    .footer-wrapper .content .img-wrapper img{
+        border-radius:8px;
+        width:40px;
+        cursor: pointer;
+    }
+    .ul-left{
+        float:left;
+        vertical-align: center;
+    }
+
+    .ul-right{
+        float:right;
+        vertical-align: center;
+    }
+    .ul-left li,.ul-right li{
+        display: inline-block;
+        margin-left:20px;
+        color:cornflowerblue;
+    }
+    
+</style>
+<link rel="stylesheet" href="./common.css">
+<body>
+    <div class="footer-wrapper">
+        <div class="content">
+            <ul class="ul-left">
+                <li>Home</li>
+                <li>About</li>
+                <li>Join us</li>
+                <li>It'sMe</li>
+            </ul>
+            <ul class="ul-right">
+                <li>Home</li>
+                <li>About</li>
+                <li>Join us</li>
+                <li>It'sMe</li>
+            </ul>
+            <div class="img-wrapper">
+                <img src="./logo.png" alt="">
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>

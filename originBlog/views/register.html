@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    .register-wrapper {
+        background: white;
+    }
+
+    .register-wrapper .content {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding-top: 100px;
+        padding-left: 400px;
+    }
+
+    .register-wrapper .content .img-hidden {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .register-wrapper .content .img-hidden input {
+        position: absolute;
+        top: 0px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 210;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    label {
+        display: inline-block;
+        width: 80px;
+    }
+
+    .block-babel {
+        display: block;
+    }
+
+    button {
+        padding: 8px 15px;
+        background: lightblue;
+        color: black;
+        border: 0 solid transparent;
+        outline: none;
+        cursor: pointer;
+    }
+</style>
+
+<body>
+    <div class="register-wrapper">
+        <div class="content">
+            <h3>
+                <span>
+                    <a href="javascript:;">注册</a>
+                </span>
+                <span>
+                    <a href="./login.html">登陆</a>
+                </span>
+            </h3>
+            <div class="name-wrapper">
+                <label for="name">姓名：</label>
+                <input type="text" id="name" name="name-input">
+            </div>
+            <div class="passWord-wrapper">
+                <label for="password">密码：</label>
+                <input type="password" id="password" name="password-input">
+            </div>
+            <div class="confirm-password">
+                <label for="confirm-password">确认密码：</label>
+                <input type="password" id="confirm-password" name="confirm-password">
+            </div>
+            <div class="sex-wrapper">
+                <label for="sex">性别：</label>
+                <select id="sex" name="sex-select">
+                    <option value="0">男</option>
+                    <option value="1">女</option>
+                </select>
+            </div>
+            <!-- <div class="avatar-wrapper">
+                <label for="avatar" class="block-babel">头像上传：</label>
+                <div class="img-hidden">
+                    <img src="/views/upload.jpg" height="100px" width="100px" alt="">
+                    <input type="file" name="avatar" id="avatar">
+                </div>
+            </div> -->
+            <div class="area-content">
+                <label class="block-babel" for="area-text">留言区域:</label>
+                <textarea name="" id="area-text" cols="32" rows="7"></textarea>
+            </div>
+            <button class="submit" id="button" type="button">提交</button>
+        </div>
+
+    </div>
+</body>
+<script src="/common/ajax.js"></script>
+<!-- <script>
+    function Ajax(method, reqURL, data, callBack) {
+        var xhr = new XMLHttpRequest();
+        xhr.open(method, reqURL, true);
+        xhr.setRequestHeader("Content-Type", "multipart/form-data; charset=UTF-8");
+        xhr.send(data);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200 || xhr.status == 304) {
+                    callBack(xhr.responseText);
+                }
+            }
+        }
+    };
+</script> -->
+<script>
+    function getId(idStr) {
+        return document.getElementById(idStr);
+    }
+    function checkField() {
+        if (getId("password").value != getId("confirm-password").value) {
+            alert("密码与第一次的不一致");
+            return false;
+        }
+        return true;
+    }
+    getId("button").onclick = function () {
+        if(!checkField()){
+            return;
+        }
+        var data = {
+            name: getId("name").value,
+            password: getId("password").value,
+            confirmPassword: getId("confirm-password").value,
+            sex: getId("sex").value,
+            areaText: getId("area-text").value,
+            act: 'register'
+        }
+       
+        // console.log(getId("avatar").files[0]);
+        // var formdata = new FormData();
+        // formdata.append("file",getId("avatar").files[0]);
+        // console.log(formdata.get('file'))
+        // Ajax("POST", '/register', formdata, function () {
+        //     console.log('注册成功，请登录');
+        // })
+        Ajax("POST", '/register', JSON.stringify(data), function (res) {
+            var res = JSON.parse(res);
+            alert(res.info);
+            window.location.href = '/views/login.html'
+        })
+        // data  = new FormData(data);
+        // Ajax("GET", '/register', data, function (res) {
+        //     alert(res)
+        // })
+        // Ajax("POST", '/register', "jaonasda", function (res) {
+        //     alert(res)
+        // })
+    }
+</script>
+
+</html>

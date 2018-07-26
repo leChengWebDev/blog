@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    .login-wrapper {
+        background: white;
+    }
+
+    .login-wrapper .content {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding-top: 100px;
+        padding-left: 400px;
+    }
+
+    .login-wrapper .content .img-hidden {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .login-wrapper .content .img-hidden input {
+        position: absolute;
+        top: 0px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 210;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    label {
+        display: inline-block;
+        width: 80px;
+    }
+
+    .block-babel {
+        display: block;
+    }
+
+    button {
+        padding: 8px 15px;
+        background: lightblue;
+        color: black;
+        border: 0 solid transparent;
+        outline: none;
+        cursor: pointer;
+    }
+</style>
+
+<body>
+    <div class="login-wrapper">
+        <div class="content">
+            <h3>
+                <span>
+                    <a href="./register.html">注册</a>
+                </span>
+                <span>
+                    <a href="javascript:;">登陆</a>
+                </span>
+            </h3>
+            <input type='text' style='display:none'>
+            <div class="name-wrapper">
+                <label for="name">姓名：</label>
+                <input type="text" id="name" name="name-input">
+            </div>
+            <div class="passWord-wrapper">
+                <label for="password">密码：</label>
+                <input type="password" id="password" readonly onfocus="this.removeAttribute('readonly');" onblur="this.setAttribute('readonly',true);"
+                    name="password-input" autocomplete='new-password' autocomplete='off'>
+            </div>
+            <button class="submit" id="button" type="button">提交</button>
+        </div>
+    </div>
+</body>
+<script src="../common/ajax.js"></script>
+<script src="../common/cookie.js"></script>
+<script>
+    var oBtn = document.getElementById("button");
+    function getId(idStr) {
+        return document.getElementById(idStr);
+    }
+    oBtn.onclick = function () {
+        var data = {
+            name: getId("name").value,
+            password:getId("password").value,
+        }
+        Ajax("POST","/login",JSON.stringify(data),function(res){
+            var res = JSON.parse(res);
+            if(res.code == 0 ){
+               var user_id =  setCookie.getCookie("user_id");
+               window.sessionStorage.setItem("name",getId("name").value);
+               alert(res.info)
+                if(res.info.indexOf("用户")!=-1){
+                    return;
+                }
+                window.location.href = "http://localhost:3000/views/personCenter.html"
+            }
+        });
+    }
+</script>
+
+</html>

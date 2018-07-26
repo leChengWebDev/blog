@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>我的个人中心</title>
+</head>
+<style>
+    ul,
+    li {
+        padding: 0;
+        margin: 0;
+    }
+
+    li {
+        list-style: none;
+    }
+
+    .person-wrapper {
+        margin-top: 300px;
+        margin-left: 300px;
+        width: 1000px;
+    }
+
+    .paging {
+        margin-top: 80px;
+    }
+
+    .paging .page-wrapper {
+        text-align: center;
+    }
+
+    .paging .page-wrapper span {
+        display: inline-block;
+        margin: 4px 10px;
+        padding: 4px 8px;
+        cursor: pointer;
+    }
+
+    .paging .page-wrapper #num {
+        display: inline-block;
+        border: 1px solid rosybrown;
+        margin: 4px 10px;
+        width: 50px;
+    }
+
+    .person-wrapper:after {
+        content: '';
+        display: block;
+        height: 0;
+        width: 0;
+        clear: both;
+        visibility: hidden;
+    }
+
+    .person-wrapper .left-list {
+        float: left;
+        margin-right: 100px;
+    }
+
+    .person-wrapper .left-list .headInfo .name {
+        color: blueviolet;
+        padding: 10px 0 10px 0;
+    }
+
+    .person-wrapper .left-list .headInfo .name-detail {
+        display: inline-block;
+        padding: 5px 12px;
+        width: 60px;
+        outline: none;
+        border: 0 solid transparent;
+        background-color: #fff;
+    }
+
+    .person-wrapper .left-list .headInfo .active {
+        border: 1px red solid;
+        box-shadow: 2px 2px 22px red;
+    }
+
+    .person-wrapper .left-list .headInfo .name-detail:after {
+        content: "";
+        display: block;
+    }
+
+    .person-wrapper .left-list .headInfo .edit-name,
+    .person-wrapper .left-list .headInfo .edit-confirm {
+        margin-top: 10px;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    .person-wrapper .left-list .headInfo .avatar {
+        cursor: pointer;
+        background: darkgoldenrod;
+        display: inline-block;
+        padding: 10px 0 10px 0;
+        color: white;
+        position: relative;
+    }
+
+    .person-wrapper .left-list .headInfo #avatar {
+        cursor: pointer;
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+    }
+
+    .person-wrapper .left-list .other-list {
+        display: inline-block;
+    }
+
+    .person-wrapper .left-list .other-list li {
+        padding: 10px 0 10px 0;
+        color: red;
+        cursor: pointer;
+    }
+    .right-list .right-ul section{
+        cursor: pointer;
+    }
+    .right-list .right-ul .time{
+        text-align: right;
+        color:aqua;
+    }
+    .right-list .right-ul .author{
+        text-align: right;
+    }
+</style>
+<link rel="stylesheet" href="./components/common.css">
+
+<body>
+    <div class="person-wrapper">
+        <div class="left-list">
+            <div class="headInfo">
+                <img src="./upload.jpg" width="80px" height="80px" id="avatar-img" alt="">
+                <div class="name">
+                    <p>
+                        昵称:
+                        <input type="text" class="name-detail" id="name" value="闫杰" disabled="true">
+                    </p>
+                    <p>
+                        <span class="edit-name">编辑</span>
+                        <span class="edit-confirm">确定</span>
+                    </p>
+                </div>
+                <p class="avatar">
+                    <span>更换头像</span>
+                    <input type="file" id="avatar">
+                </p>
+            </div>
+            <div class="other-list">
+                <ul class="other-ul">
+                    <li>查看文章</li>
+                    <li>
+                        <a href="./writeBlog.html">书写博文</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="right-list">
+            <ul class="right-ul" id="artical-list">
+                <li>
+                        <div class="artical-wrapper">
+                            <h3 class="artical-title"></h3>
+                            <section>
+                                * 登录注册 * 上传文件模块 * 发布博文模块 * 查看博文模块 * 博文留言模块 * 
+                                  首页　个人中心　奇思杂感　文件上传 --- * mongodb中的语法有些并不适用于
+                                  node.js中，比如db.getCollection("集合");
+                                * mongodb中查询返回指定字段，db.collection.find({},{"id":1,"title":1})
+                                  [查询该集合全部文档，第一个参数为查询条件，后面的指示为只查id和title字段]
+                                * db.collection.find({},{"content":0})[查询除content之外的所有字段]
+                            </section>
+                            <p class="author"></p>
+                            <p class="time"></p>
+                        </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="paging">
+        <div class="page-wrapper">
+            <span class="pre-page">上一页</span>
+            <span class="gong">共
+                <input type="text" readonly id="num">页</span>
+            <span class="next-page">下一页</span>
+            <span class="current-page">
+                当前第
+                <span id="nowPage"></span>页
+            </span>
+        </div>
+    </div>
+</body>
+<script src="../common/ajax.js"></script>
+<script src="../common/cookie.js"></script>
+<script>
+    // 全局变量
+    var NOWPAGE = 1;
+    function initPageData() {
+        var data = {
+            user_id: setCookie.getCookie("user_id")
+        }
+        Ajax("POST", "/initPage", data, function (res) {
+            var resData = JSON.parse(res);
+            if (resData.code == 0) {
+                getId("num").value = resData.sumPage;
+            //     var liHtml = '';
+            //     var arti_data = resData.articalData.length;
+            //     for(var i = 0 ; i < resData.articalData.length;i++){
+            //         liHtml += '\
+            //                     <li>\
+            //                         <div class="artical-wrapper">\
+            //                             <h3 class="artical-title">'+arti_data[i].title+'</h3>\
+            //                             <section>\
+            //                                 '+arti_data[i].content+'\
+            //                             </section>\
+            //                             <p class="author">'+ arti_data[i].authorName+'</p>\
+            //                             <p class="time">'+ arti_data[i].time+'</p>\
+            //                         </div>\
+            //                     </li>\
+            //                   ';
+            //     }
+            //    getId("artical-list").innerHTML = liHtml;
+            }
+        })
+    }
+    initPageData()
+    if (!setCookie.getCookie("user_id")) {
+        window.location = "/restrict_use.html";
+    }
+    getId("name").value = window.sessionStorage.getItem("name");
+    var oAvatar = getId("avatar");
+    var oAvatar_img = getId("avatar-img");
+    function getId(str) {
+        return document.getElementById(str);
+    }
+    function getClass(str) {
+        return document.getElementsByClassName(str);
+    }
+    function upLoad(ev) {
+        // 文件上传变量
+        var reader = new FileReader();
+        var file = ev.target.files[0];
+        if (/image/.test(file.type)) {
+            reader.readAsDataURL(file);
+            if (file.size > 102400) {
+                alert("请上传正确的文件大小");
+                return;
+            }
+        }
+        else {
+            alert("请上传正确的图片文件")
+        }
+        reader.onerror = function () {
+            alert("文件读取错误");
+        }
+        reader.onload = function () {
+            oAvatar_img.src = reader.result;
+            // ajax上传
+            var formdata = new FormData();
+            // formdata.append("name", file.name);
+            formdata.append("file-content", file);
+            Ajax("POST", "/upLoadImg", formdata, function (res) {
+                alert("文件已成功上传到服务器");
+            })
+        }
+    }
+    oAvatar.addEventListener("change", upLoad, false);
+    var edit = getClass("edit-name")[0];
+    var edit_confirm = getClass("edit-confirm")[0];
+    edit.addEventListener("click", function (ev) {
+        getClass("name-detail")[0].disabled = false;
+        getClass("name-detail")[0].focus();
+        getClass("name-detail")[0].classList.add("active");
+    }, false);
+    edit_confirm.addEventListener("click", function () {
+        if (getId("name").value.trim() == "") {
+            alert("更改的名字不能为空");
+            return;
+        }
+        var data = {
+            name: getId("name").value,
+        }
+        Ajax("POST", "/editName", JSON.stringify(data), function (res) {
+            var data = JSON.parse(res);
+            if (data.code == 0) {
+                getId("name").value = data.name;
+                getId("name").classList.remove("active");
+                alert(data.msg);
+            }
+        })
+    })
+</script>
+
+</html>

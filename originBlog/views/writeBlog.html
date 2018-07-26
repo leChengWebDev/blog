@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    .head-img {
+        margin: 0 auto;
+        width: 80%;
+        background: url("./writeImg.jpg") no-repeat left -200px;
+        background-size: cover;
+        height: 200px;
+    }
+
+    .write-area {
+        margin-top: 30px;
+        padding: 0px 200px;
+        font-size: 0px;
+    }
+
+    .write-area .left,
+    .write-area .right {
+        box-sizing: border-box;
+        display: inline-block;
+        vertical-align: top;
+        width: 50%;
+        border: 1px solid salmon;
+        height: 500px;
+    }
+
+    .content-wrapper {
+        position: relative;
+        height: 414px;
+    }
+
+    #left-content,
+    #right-content {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 20px;
+        outline: none;
+        font-size: 16px;
+    }
+
+    h3 {
+        font-size: 20px;
+        text-align: center;
+        border-bottom: 1px solid turquoise;
+        padding-bottom: 20px;
+        cursor: pointer;
+    }
+    .is-confirm{
+        text-align: right;
+        padding-right:80px;
+        margin-top:80px;
+        width:80%;
+    }
+    button{
+        display: inline-block;
+        margin-right:20px;
+        cursor: pointer;
+        outline: none;
+        border:1px solid transparent;
+        padding:8px 16px;
+        background-color:tomato;
+        color:#fff;
+        border-radius:5px;
+
+    }
+    a{
+        text-decoration: none;
+    }
+</style>
+
+<body>
+    <div class="head-img">
+    </div>
+    <div class="write-area">
+        <div class="left">
+            <h3>MD书写区域</h3>
+            <div class="content-wrapper">
+                <div id="left-content" contenteditable="true"></div>
+            </div>
+        </div>
+        <div class="right">
+            <h3>MD实时预览</h3>
+            <div class="content-wrapper">
+                <div id="right-content"></div>
+            </div>
+        </div>
+    </div>
+    <div class="is-confirm">
+        <button class="cancel" id="cancel"><a href="./personCenter.html">返回</a></button>
+        <button class="confirm" id="confirm">确定发表</button>
+    </div>
+    <script src="../common/ajax.js"></script>
+    <script src="../common/cookie.js"></script>
+    <!-- 引入marked插件 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        function getId(str) {
+            return document.getElementById(str);
+        }
+        getId("left-content").addEventListener("keyup", function (ev) {
+            var newValue = ev.target.innerHTML;
+            getId("right-content").innerHTML = marked(newValue, {
+                pedantic: false,
+                gfm: true,
+                tables: true,
+                breaks: false,
+                sanitize: false,
+                smartLists: true,
+                smartypants: false,
+                xhtml: false
+            });
+        })
+        getId("confirm").addEventListener("click",function(){
+            if(getId("right-content").innerText == ""){
+                alert("文章内容不能为空");
+                return;
+            }
+            var data = {
+                writeContent:getId("right-content").innerHTML,
+                desc:getId("right-content").innerText.slice(0,100)+"...",
+                title:getId("right-content").innerHTML.slice(0,10)
+            }
+            Ajax("POST","/recordBlog",JSON.stringify(data),function(res){
+                var resData = JSON.parse(res);
+                if(resData.code == 0 ){
+                    alert(resData.msg);
+                    window.location = "/views/personCenter.html";
+                }
+            })
+        })
+    </script>
+</body>
+
+</html>
